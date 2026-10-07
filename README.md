@@ -20,7 +20,7 @@ Each section below is marked **measured**, **vision** or **correction**.
 
 1. **A read is a weak write.** Pinging an oscillating phase memory with a query pattern shifts each unit's phase by $`\arg(1+a\,e^{i\alpha})\approx a\sin\alpha`$. The read signal and the lasting damage are the same quantity (Gate 5).
 2. **A sign-flipped second pulse undoes it.** Query, listen, then send the same pulse negated: same answer, 3–7× less lasting damage at matched answer accuracy. The residual is second order, $`\approx a^2`$ (Gate 6, post-hoc matching).
-3. **Exact undo needs a copy of the pre-query state.** With it, the residual is about $`10^{-9}`$. Without it, a² is the floor (Gate 6b).
+3. **Exact undo with this simple protocol needs a copy of the pre-query state.** With it, the residual is about $`10^{-9}`$; the plain counterpulse leaves an a² residual (Gate 6b). *Correction (Sol):* that a² is a property of the simple counterpulse, not a universal lower bound, and known, invertible dynamics can sometimes reconstruct what is needed without a saved copy; noise and partial observation make that harder.
 
 ## Vision 1 — inhibition after a tuft read is an eraser, not a commit (measured in part, below)
 
@@ -60,13 +60,19 @@ Damage is the lasting per-unit phase shift against an unqueried twin. Ping stren
 
 - **V1 passes:** an input-locked eraser at 2 cycles cuts damage 6.7× (0.141 → 0.021), and the answer is unchanged (0.0210 → 0.0210). Even at 1 cycle, *inside* the listening window, the answer is unaffected (0.0208) and damage is lowest (0.017).
 - **V2 passes:** at half-integer delays the eraser doubles the damage (0.278). Quarter cycles are also worse than nothing (0.20).
-- **V3 fails:** rate-driven inhibition barely helps (0.134 vs 0.141). This is the most informative result. A firing rate tracks the *amplitude* part of the kick, a·cos α; the lasting damage is the *phase* part, a·sin α. **An eraser driven by the neuron's output cannot undo its input; it has to carry a copy of the input.**
+- **V3 fails:** this particular amplitude-driven controller barely helps (0.134 vs 0.141). *Correction (Sol):* richer output-driven feedback is not ruled out; only this controller failed. This is the most informative result. A firing rate tracks the *amplitude* part of the kick, a·cos α; the lasting damage is the *phase* part, a·sin α. **An eraser driven only by the output's amplitude cannot undo the input's phase part; this one would need a copy of the input.**
 
-**What that says about the vision.** In its literal form, a Martinotti cell recruited by the pyramidal cell's own firing, Vision 1 fails here. An eraser fed by a copy of the top-down input works, but only at whole-cycle delays. If the brain does this, the candidate is not output-driven inhibition but **feedforward inhibition from the same top-down input**. Layer-1 interneurons that receive long-range input and inhibit tufts would fit (from memory, not checked today), with a delay locked to the ongoing rhythm.
+**What that says about the vision.** In the literal form tested here, a Martinotti-like cell recruited by the pyramidal cell's firing rate, Vision 1 fails. An eraser fed by a copy of the top-down input works, but only at whole-cycle delays. If the brain does this, the candidate is not output-driven inhibition but **feedforward inhibition from the same top-down input**. Layer-1 interneurons that receive long-range input and inhibit tufts would fit (from memory, not checked today), with a delay locked to the ongoing rhythm.
 
 **That gives a sharp prediction for anyone with a slice rig:** in an oscillating pyramidal neuron, pair a tuft input with an inhibitory input carrying the same strength, and measure the lasting phase shift of the oscillation. It should be nearly cancelled at whole-cycle delays and doubled at half-cycle delays.
 
 **Caveats.** This is a phase-oscillator abstraction of a tuft, not a compartmental neuron. g = 1 (perfectly matched eraser strength), one ping strength, one rhythm-to-relaxation ratio. Biological delays aren't mapped: at theta (~8 Hz) a whole cycle is ~125 ms, at gamma (~40 Hz) ~25 ms, and whether either matches real feedforward inhibition onto tufts is unchecked.
+
+## Sol's independent replication
+
+Sol's [RESTORE.md](https://github.com/anttiluode/VMN/blob/main/RESTORE.md) ran query-and-restore over repeated interrogation: with counterpulses the eighth query's error stayed at 0.043, against 0.228 for repeated uncompensated pulses, with 0.0038 added position error; the combined criterion passed on three of four banks. Sol also points to a detailed pyramidal-neuron model in which inhibition's effect depends strongly on location, frequency and phase ([eLife](https://elifesciences.org/articles/95562)). That supports taking timed dendritic inhibition seriously; it does not show an eraser.
+
+**Open hurdle (Sol):** both repos read every unit with a large decoder. Query-and-restore through a cheap interface is still undemonstrated.
 
 ## Vision 2 — BAC firing is where an exact undo would have to live (vision, untested)
 
